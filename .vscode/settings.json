@@ -1,0 +1,30 @@
+{
+    "idf.adapterTargetName": "esp32",
+    "files.associations": {
+        "task.h": "c",
+        "esp_event_loop.h": "c",
+        "array": "c",
+        "string": "c",
+        "string_view": "c",
+        "*.shouldwork": "c",
+        "esp_log.h": "c",
+        "esp_event.h": "c",
+        "*.sniffer": "c",
+        "*.tcc": "c",
+        "bitset": "c",
+        "vector": "c",
+        "functional": "c",
+        "istream": "c",
+        "limits": "c",
+        "ostream": "c",
+        "ratio": "c",
+        "sstream": "c",
+        "stop_token": "c",
+        "streambuf": "c",
+        "regex": "c",
+        "tuple": "c",
+        "*.inc": "c"
+    },
+    "editor.formatOnSave": true,
+    "cmake.configureOnOpen": false
+}

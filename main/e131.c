@@ -1,0 +1,76 @@
+#include <string.h>
+
+#define UDP_DATA_SIZE 186
+
+const char E131_ROOT_PREAMBLESIZE[] = {0x00, 0x10};
+const char E131_ROOT_POSTAMBLESIZE[] = {0x00, 0x00};
+const char E131_ROOT_PacketID[] = {0x41, 0x53, 0x43, 0x2d, 0x45, 0x31, 0x2e, 0x31, 0x37, 0x00, 0x00, 0x00};
+const char E131_ROOT_FLENGTH[] = {0x70, 0xaa};
+const char E131_ROOT_VECTOR[] = {0x00, 0x00, 0x00, 0x04};
+const char E131_ROOT_CID[] = {0xfb, 0x3c, 0x10, 0x65, 0xa1, 0x7f, 0x4d, 0xe2, 0x99, 0x19, 0x31, 0x7a, 0x07, 0xc1, 0x00, 0x52};
+
+const char E131_FRAME_FLENGTH[] = {0x70, 0x94};
+const char E131_FRAME_VECTOR[] = {0x00, 0x00, 0x00, 0x02};
+const char E131_FRAME_SOURCENAME[] = {0x4c, 0x41, 0x4c, 0x54, 0x2d, 0x44, 0x4d, 0x58, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+const char E131_FRAME_PRIORITY[] = {0x64};
+const char E131_FRAME_SYNCADDR[] = {0x00, 0x00};
+// increment sequence number
+const char E131_FRAME_SEQNUM[] = {0x00};
+const char E131_FRAME_OPTIONS[] = {0x00};
+// change universe
+const char E131_FRAME_UNIVERSENUM[] = {0x00, 0x01};
+
+const char E131_DMP_FLENGTH[] = {0x70, 0x47};
+const char E131_DMP_VECTOR[] = {0x02};
+const char E131_DMP_TYPE[] = {0xa1};
+const char E131_DMP_FIRSTADDR[] = {0x00, 0X00};
+const char E131_DMP_ADDRINC[] = {0x00, 0x01};
+const char E131_DMP_PROPVALCOUNT[] = {0x00, 0x3d};
+const char E131_DMP_PROPVALS[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+char defaultPacket[UDP_DATA_SIZE];
+
+void createPacket(char finalData[UDP_DATA_SIZE], char seqNum, int uniInt, char rgbw[4])
+{
+    memcpy(finalData, defaultPacket, UDP_DATA_SIZE);
+
+    char seqString[1] = {seqNum};
+    memcpy(finalData + 111, seqString, 1);
+    char universe[2];
+    universe[0] = (uniInt >> 8);
+    universe[1] = uniInt;
+    memcpy(finalData + 113, universe, 2);
+
+    for (size_t i = 0; i < 15; i++)
+    {
+        memcpy(finalData + 126 + (i * 4), rgbw, 4);
+    }
+}
+
+void createDefaultPacket()
+{
+    memcpy(defaultPacket, E131_ROOT_PREAMBLESIZE, 2);
+    memcpy(defaultPacket + 2, E131_ROOT_POSTAMBLESIZE, 2);
+    memcpy(defaultPacket + 4, E131_ROOT_PacketID, 12);
+    memcpy(defaultPacket + 16, E131_ROOT_FLENGTH, 2);
+    memcpy(defaultPacket + 18, E131_ROOT_VECTOR, 4);
+    memcpy(defaultPacket + 22, E131_ROOT_CID, 16);
+
+    memcpy(defaultPacket + 38, E131_FRAME_FLENGTH, 2);
+    memcpy(defaultPacket + 40, E131_FRAME_VECTOR, 4);
+    memcpy(defaultPacket + 44, E131_FRAME_SOURCENAME, 64);
+    memcpy(defaultPacket + 108, E131_FRAME_PRIORITY, 1);
+    memcpy(defaultPacket + 109, E131_FRAME_SYNCADDR, 2);
+    memcpy(defaultPacket + 111, E131_FRAME_SEQNUM, 1);
+    memcpy(defaultPacket + 112, E131_FRAME_OPTIONS, 1);
+    memcpy(defaultPacket + 113, E131_FRAME_UNIVERSENUM, 2);
+
+    memcpy(defaultPacket + 115, E131_DMP_FLENGTH, 2);
+    memcpy(defaultPacket + 117, E131_DMP_VECTOR, 1);
+    memcpy(defaultPacket + 118, E131_DMP_TYPE, 1);
+    memcpy(defaultPacket + 119, E131_DMP_FIRSTADDR, 2);
+    memcpy(defaultPacket + 121, E131_DMP_ADDRINC, 2);
+    memcpy(defaultPacket + 123, E131_DMP_PROPVALCOUNT, 2);
+
+    memcpy(defaultPacket + 125, E131_DMP_PROPVALS, 5);
+}
